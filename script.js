@@ -74,7 +74,8 @@ function kellyAnnualReturnFromImage(numTradesPerYear, p, winReturn, lossReturn) 
     
     const fStar = (p / a) - (q / b);
 
-    if (fStar <= 0 || fStar > 1) {
+    // 베팅 비율이 0 이하인 경우에만 0 반환
+    if (fStar <= 0) {
         return {
             kellyFraction: fStar,
             growthPerTradeLog: 0.0,
@@ -82,12 +83,21 @@ function kellyAnnualReturnFromImage(numTradesPerYear, p, winReturn, lossReturn) 
         };
     }
 
-    const g = p * Math.log(1 + fStar * b) + q * Math.log(1 - fStar * a);
+    // Kelly 비율이 100%를 넘어도 계산 진행 (단, 100% 이하로 제한하여 계산)
+    let adjustedFStar = fStar;
+    if (fStar > 1) {
+        adjustedFStar = 1; // 계산 시에는 100%로 제한
+    }
+
+    // 1회 거래 기대 로그 수익률
+    const g = p * Math.log(1 + adjustedFStar * b) + q * Math.log(1 - adjustedFStar * a);
+    
+    // 연간 기대 수익률 (복리)
     const totalLogGrowth = g * numTradesPerYear;
     const annualReturn = Math.exp(totalLogGrowth) - 1;
 
     return {
-        kellyFraction: Math.round(fStar * 1000000) / 1000000,
+        kellyFraction: Math.round(fStar * 1000000) / 1000000, // 원래 Kelly 비율 그대로 표시
         growthPerTradeLog: Math.round(g * 100000000) / 100000000,
         annualGrowthRate: Math.round(annualReturn * 100 * 1000) / 1000
     };
