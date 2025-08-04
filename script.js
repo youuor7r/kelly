@@ -119,6 +119,16 @@ const resultDiv2 = document.getElementById('result2');
 // --- 이벤트 리스너 ---
 // 계산기 1: 계산 버튼 클릭 이벤트
 calculateBtn.addEventListener('click', function() {
+    // DOM 요소 존재 확인
+    if (!numTradesInput || !profitLossRatioInput || !winRateInput) {
+        console.error('DOM 요소를 찾을 수 없습니다:', {
+            numTradesInput: !!numTradesInput,
+            profitLossRatioInput: !!profitLossRatioInput,
+            winRateInput: !!winRateInput
+        });
+        return;
+    }
+
     const numTrades = parseFloat(numTradesInput.value);
     const b = parseFloat(profitLossRatioInput.value);
     const p = parseFloat(winRateInput.value);
@@ -155,6 +165,17 @@ calculateBtn.addEventListener('click', function() {
 // 계산기 2: 계산 버튼 클릭 이벤트
 calculateBtn2.addEventListener('click', function() {
     console.log('계산기 2 버튼 클릭됨');
+    
+    // DOM 요소 존재 확인
+    if (!numTradesInput2 || !winRateInput2 || !winReturnInput || !lossReturnInput) {
+        console.error('DOM 요소를 찾을 수 없습니다:', {
+            numTradesInput2: !!numTradesInput2,
+            winRateInput2: !!winRateInput2,
+            winReturnInput: !!winReturnInput,
+            lossReturnInput: !!lossReturnInput
+        });
+        return;
+    }
     
     const numTrades = parseFloat(numTradesInput2.value);
     const p = parseFloat(winRateInput2.value);
@@ -295,7 +316,28 @@ setupEnterKey([numTradesInput2, winRateInput2, winReturnInput, lossReturnInput],
 
 // --- 페이지 로드 시 초기화 ---
 document.addEventListener('DOMContentLoaded', function() {
-    // 기본값으로 계산 실행
-    calculateBtn.click();
-    calculateBtn2.click();
+    console.log('DOM 로드 완료');
+    
+    // DOM 요소들이 존재하는지 확인
+    const elements = {
+        numTradesInput: document.getElementById('numTrades'),
+        profitLossRatioInput: document.getElementById('profitLossRatio'),
+        winRateInput: document.getElementById('winRate'),
+        calculateBtn: document.getElementById('calculateBtn'),
+        numTradesInput2: document.getElementById('numTrades2'),
+        winRateInput2: document.getElementById('winRate2'),
+        winReturnInput: document.getElementById('winReturn'),
+        lossReturnInput: document.getElementById('lossReturn'),
+        calculateBtn2: document.getElementById('calculateBtn2')
+    };
+    
+    console.log('DOM 요소 확인:', elements);
+    
+    // 기본값으로 계산 실행 (요소가 존재할 때만)
+    if (elements.calculateBtn) {
+        elements.calculateBtn.click();
+    }
+    if (elements.calculateBtn2) {
+        elements.calculateBtn2.click();
+    }
 });
