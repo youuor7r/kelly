@@ -63,6 +63,42 @@ function kellyFractionFromImage(p, winReturn, lossReturn) {
     };
 }
 
+// Kelly 연간 수익률 계산 함수 (이미지 기반)
+function kellyAnnualReturnFromImage(numTradesPerYear, p, winReturn, lossReturn) {
+    const q = 1 - p;
+    const b = winReturn / 100; // 승리 시 수익률
+    const a = lossReturn / 100; // 패배 시 손실률
+
+    if (a === 0 || b === 0) {
+        return { error: '수익률과 손실률은 0이 될 수 없습니다.' };
+    }
+    
+    // 이미지 공식: f* = p/a - q/b
+    const fStar = (p / a) - (q / b);
+
+    // 베팅 비율이 비합리적이면 return 0
+    if (fStar <= 0 || fStar > 1) {
+        return {
+            kellyFraction: fStar,
+            growthPerTradeLog: 0.0,
+            annualGrowthRate: 0.0
+        };
+    }
+
+    // 1회 거래 기대 로그 수익률 (이미지 공식 기준)
+    const g = p * Math.log(1 + fStar * b) + q * Math.log(1 - fStar * a);
+
+    // 연간 기대 수익률 (복리)
+    const totalLogGrowth = g * numTradesPerYear;
+    const annualReturn = Math.exp(totalLogGrowth) - 1;
+
+    return {
+        kellyFraction: Math.round(fStar * 1000000) / 1000000,
+        growthPerTradeLog: Math.round(g * 100000000) / 100000000,
+        annualGrowthRate: Math.round(annualReturn * 100 * 1000) / 1000
+    };
+}
+
 
 // --- DOM 요소들 ---
 // 계산기 1
@@ -72,7 +108,8 @@ const winRateInput = document.getElementById('winRate');
 const calculateBtn = document.getElementById('calculateBtn');
 const resultDiv = document.getElementById('result');
 
-// 계산기 2 (수익률 기반 - 공식 선택 가능)
+// 계산기 2 (이미지 기반 - 연간 수익률 포함)
+const numTradesInput2 = document.getElementById('numTrades2');
 const winRateInput2 = document.getElementById('winRate2');
 const winReturnInput = document.getElementById('winReturn');
 const lossReturnInput = document.getElementById('lossReturn');
@@ -119,23 +156,20 @@ calculateBtn.addEventListener('click', function() {
 calculateBtn2.addEventListener('click', function() {
     console.log('계산기 2 버튼 클릭됨');
     
+    const numTrades = parseFloat(numTradesInput2.value);
     const p = parseFloat(winRateInput2.value);
     const winReturn = parseFloat(winReturnInput.value);
     const lossReturn = parseFloat(lossReturnInput.value);
     
-    console.log('입력값:', { p, winReturn, lossReturn });
+    console.log('입력값:', { numTrades, p, winReturn, lossReturn });
     
-    // 선택된 공식 확인
-    const selectedFormula = document.querySelector('input[name="formula"]:checked')?.value;
-    console.log('선택된 공식:', selectedFormula);
-    
-    if (!selectedFormula) {
-        showError('공식을 선택해주세요.', resultDiv2);
+    if (isNaN(numTrades) || isNaN(p) || isNaN(winReturn) || isNaN(lossReturn)) {
+        showError('모든 입력값을 숫자로 입력해주세요.', resultDiv2);
         return;
     }
     
-    if (isNaN(p) || isNaN(winReturn) || isNaN(lossReturn)) {
-        showError('모든 입력값을 숫자로 입력해주세요.', resultDiv2);
+    if (numTrades <= 0) {
+        showError('연간 거래 횟수는 0보다 커야 합니다.', resultDiv2);
         return;
     }
     
@@ -149,21 +183,15 @@ calculateBtn2.addEventListener('click', function() {
         return;
     }
     
-    let result;
-    if (selectedFormula === 'standard') {
-        console.log('표준 공식 사용');
-        result = kellyFractionFromReturns(p, winReturn, lossReturn);
-    } else {
-        console.log('이미지 공식 사용');
-        result = kellyFractionFromImage(p, winReturn, lossReturn);
-    }
+    // 이미지 공식만 사용
+    const result = kellyAnnualReturnFromImage(numTrades, p, winReturn, lossReturn);
     
     console.log('계산 결과:', result);
     
     if (result.error) {
         showError(result.error, resultDiv2);
     } else {
-        showResult2(result, selectedFormula);
+        showResult2(result);
     }
 });
 
@@ -200,18 +228,24 @@ function showResult1(result) {
 }
 
 // 계산기 2 결과 표시
-function showResult2(result, formula) {
-    const { kellyFraction } = result;
-    
-    const formulaText = formula === 'standard' 
-        ? 'f* = (p × b - q × a) / b' 
-        : 'f* = p/a - q/b';
+function showResult2(result) {
+    const { kellyFraction, growthPerTradeLog, annualGrowthRate } = result;
     
     let html = `
         <div class="result-item">
             <h4>Kelly 비율 (f*)</h4>
             <div class="value">${(kellyFraction * 100).toFixed(2)}%</div>
-            <div class="description">최적 투자 비중 (${formulaText} 사용)</div>
+            <div class="description">최적 투자 비중 (f* = p/a - q/b 사용)</div>
+        </div>
+        <div class="result-item">
+            <h4>1회 거래 기대 로그 수익률</h4>
+            <div class="value">${growthPerTradeLog.toFixed(6)}</div>
+            <div class="description">로그 스케일에서의 1회 거래 기대 수익률</div>
+        </div>
+        <div class="result-item">
+            <h4>연간 예상 수익률</h4>
+            <div class="value" style="color: ${annualGrowthRate >= 0 ? '#38a169' : '#e53e3e'}">${annualGrowthRate >= 0 ? '+' : ''}${annualGrowthRate.toFixed(3)}%</div>
+            <div class="description">Kelly 기준에 따른 연간 복리 수익률</div>
         </div>
     `;
     
@@ -257,7 +291,7 @@ function setupEnterKey(inputs, button) {
 }
 
 setupEnterKey([numTradesInput, profitLossRatioInput, winRateInput], calculateBtn);
-setupEnterKey([winRateInput2, winReturnInput, lossReturnInput], calculateBtn2);
+setupEnterKey([numTradesInput2, winRateInput2, winReturnInput, lossReturnInput], calculateBtn2);
 
 // --- 페이지 로드 시 초기화 ---
 document.addEventListener('DOMContentLoaded', function() {

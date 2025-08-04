@@ -49,22 +49,14 @@
             
             <hr class="section-divider">
             
-                        <div class="calculator" id="calculator2">
+            <div class="calculator" id="calculator2">
                 <div class="input-section">
-                    <h2>수익률 기반 계산기</h2>
+                    <h2>이미지 기반 계산기 (f = p/a - q/b)</h2>
                     
                     <div class="input-group">
-                        <label>계산 공식 선택</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="formula" value="standard" checked>
-                                <span>표준 공식: f* = (p × b - q × a) / b</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="formula" value="image">
-                                <span>이미지 공식: f* = p/a - q/b</span>
-                            </label>
-                        </div>
+                        <label for="numTrades2">연간 거래 횟수</label>
+                        <input type="number" id="numTrades2" min="1" value="12" placeholder="예: 12">
+                        <small>1년 동안 몇 번 거래하시나요?</small>
                     </div>
                     
                     <div class="input-group">
