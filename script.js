@@ -89,12 +89,39 @@ function kellyAnnualReturnFromImage(numTradesPerYear, p, winReturn, lossReturn) 
         adjustedFStar = 1; // 계산 시에는 100%로 제한
     }
 
-    // 1회 거래 기대 로그 수익률
-    const g = p * Math.log(1 + adjustedFStar * b) + q * Math.log(1 - adjustedFStar * a);
+    console.log('계산 과정:', {
+        fStar: fStar,
+        adjustedFStar: adjustedFStar,
+        p: p,
+        q: q,
+        a: a,
+        b: b
+    });
+
+    // 1회 거래 기대 로그 수익률 (이미지 공식에 맞는 계산)
+    // 승리 시: 자본의 f* 만큼 투자하여 b% 수익
+    // 패배 시: 자본의 f* 만큼 투자하여 a% 손실
+    const winPart = p * Math.log(1 + adjustedFStar * b);
+    const lossPart = q * Math.log(1 - adjustedFStar * a);
+    const g = winPart + lossPart;
+    
+    console.log('로그 계산:', {
+        winPart: winPart,
+        lossPart: lossPart,
+        g: g,
+        '1 + adjustedFStar * b': 1 + adjustedFStar * b,
+        '1 - adjustedFStar * a': 1 - adjustedFStar * a
+    });
     
     // 연간 기대 수익률 (복리)
     const totalLogGrowth = g * numTradesPerYear;
     const annualReturn = Math.exp(totalLogGrowth) - 1;
+
+    console.log('최종 결과:', {
+        totalLogGrowth: totalLogGrowth,
+        annualReturn: annualReturn,
+        annualReturnPercent: annualReturn * 100
+    });
 
     return {
         kellyFraction: Math.round(fStar * 1000000) / 1000000, // 원래 Kelly 비율 그대로 표시
