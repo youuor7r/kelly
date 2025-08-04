@@ -117,12 +117,22 @@ calculateBtn.addEventListener('click', function() {
 
 // 계산기 2: 계산 버튼 클릭 이벤트
 calculateBtn2.addEventListener('click', function() {
+    console.log('계산기 2 버튼 클릭됨');
+    
     const p = parseFloat(winRateInput2.value);
     const winReturn = parseFloat(winReturnInput.value);
     const lossReturn = parseFloat(lossReturnInput.value);
     
+    console.log('입력값:', { p, winReturn, lossReturn });
+    
     // 선택된 공식 확인
-    const selectedFormula = document.querySelector('input[name="formula"]:checked').value;
+    const selectedFormula = document.querySelector('input[name="formula"]:checked')?.value;
+    console.log('선택된 공식:', selectedFormula);
+    
+    if (!selectedFormula) {
+        showError('공식을 선택해주세요.', resultDiv2);
+        return;
+    }
     
     if (isNaN(p) || isNaN(winReturn) || isNaN(lossReturn)) {
         showError('모든 입력값을 숫자로 입력해주세요.', resultDiv2);
@@ -141,10 +151,14 @@ calculateBtn2.addEventListener('click', function() {
     
     let result;
     if (selectedFormula === 'standard') {
+        console.log('표준 공식 사용');
         result = kellyFractionFromReturns(p, winReturn, lossReturn);
     } else {
+        console.log('이미지 공식 사용');
         result = kellyFractionFromImage(p, winReturn, lossReturn);
     }
+    
+    console.log('계산 결과:', result);
     
     if (result.error) {
         showError(result.error, resultDiv2);
