@@ -163,10 +163,23 @@ header p {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+.section-divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+    margin: 40px 0;
+}
+
 .info-section h3 {
     color: #4a5568;
     margin-bottom: 20px;
     font-size: 1.3rem;
+}
+
+.formula-section h4 {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-bottom: 15px;
 }
 
 .formula {
@@ -217,4 +230,4 @@ header p {
     .input-section, .result-section, .info-section {
         padding: 20px;
     }
-} 
+}

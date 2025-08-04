@@ -12,7 +12,7 @@
             <h1>Kelly 수익률 계산기</h1>
             <p>Kelly 기준을 사용한 연간 복리 수익률 예측</p>
         </header>
-
+        
         <main>
             <div class="calculator">
                 <div class="input-section">
@@ -23,22 +23,22 @@
                         <input type="number" id="numTrades" min="1" value="12" placeholder="예: 12">
                         <small>1년 동안 몇 번 거래하시나요?</small>
                     </div>
-
+                    
                     <div class="input-group">
                         <label for="profitLossRatio">손익비 (b)</label>
                         <input type="number" id="profitLossRatio" min="0.1" step="0.1" value="2.0" placeholder="예: 2.0">
                         <small>평균수익 / 평균손실 (예: 2.0 = 수익이 손실의 2배)</small>
                     </div>
-
+                    
                     <div class="input-group">
                         <label for="winRate">승률 (p)</label>
                         <input type="number" id="winRate" min="0" max="1" step="0.01" value="0.65" placeholder="예: 0.65">
                         <small>0~1 사이의 값 (예: 0.65 = 65% 승률)</small>
                     </div>
-
+                    
                     <button id="calculateBtn" class="calculate-btn">계산하기</button>
                 </div>
-
+                
                 <div class="result-section">
                     <h2>결과</h2>
                     <div id="result" class="result-content">
@@ -46,27 +46,82 @@
                     </div>
                 </div>
             </div>
-
+            
+            <hr class="section-divider">
+            
+            <div class="calculator" id="calculator2">
+                <div class="input-section">
+                    <h2>수익률 기반 계산기 (이미지 기반)</h2>
+                    
+                    <div class="input-group">
+                        <label for="winRate2">승률 (p)</label>
+                        <input type="number" id="winRate2" min="0" max="1" step="0.01" value="0.65" placeholder="예: 0.65">
+                        <small>0~1 사이의 값 (예: 0.65 = 65% 승률)</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="winReturn">승리 시 수익률 (b, %)</label>
+                        <input type="number" id="winReturn" min="0" step="0.1" value="20" placeholder="예: 20">
+                        <small>수익률(%)을 양수로 입력하세요 (예: 20% -> 20)</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="lossReturn">패배 시 손실률 (a, %)</label>
+                        <input type="number" id="lossReturn" min="0" step="0.1" value="10" placeholder="예: 10">
+                        <small>손실률(%)을 양수로 입력하세요 (예: 10% -> 10)</small>
+                    </div>
+                    
+                    <button id="calculateBtn2" class="calculate-btn">계산하기</button>
+                </div>
+                
+                <div class="result-section">
+                    <h2>결과</h2>
+                    <div id="result2" class="result-content">
+                        <p class="placeholder">입력값을 입력하고 계산하기 버튼을 클릭하세요.</p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="info-section">
                 <h3>Kelly 공식 설명</h3>
-                <div class="formula">
-                    <p><strong>Kelly 비율:</strong> f* = (b × p - q) / b</p>
-                    <p><strong>연간 수익률:</strong> (1 + f* × b)^p × (1 - f*)^q)^n - 1</p>
+                
+                <div class="formula-section">
+                    <h4>손익비 기반 공식</h4>
+                    <div class="formula">
+                        <p><strong>Kelly 비율:</strong> f* = (b × p - q) / b</p>
+                        <p><strong>연간 수익률:</strong> ((1 + f* × b)^p × (1 - f*)^q)^n - 1</p>
+                    </div>
+                    <div class="variables">
+                        <p><strong>변수:</strong></p>
+                        <ul>
+                            <li><strong>b:</strong> 손익비 (평균수익 / 평균손실)</li>
+                            <li><strong>p:</strong> 승률, <strong>q:</strong> 패률 (1-p)</li>
+                            <li><strong>f*:</strong> 최적 투자 비중</li>
+                            <li><strong>n:</strong> 연간 거래 횟수</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="variables">
-                    <p><strong>변수 설명:</strong></p>
-                    <ul>
-                        <li><strong>b:</strong> 손익비 (평균수익 / 평균손실)</li>
-                        <li><strong>p:</strong> 승률 (0~1)</li>
-                        <li><strong>q:</strong> 패률 (1-p)</li>
-                        <li><strong>f*:</strong> 최적 투자 비중</li>
-                        <li><strong>n:</strong> 연간 거래 횟수</li>
-                    </ul>
+                
+                <hr class="section-divider">
+                
+                <div class="formula-section">
+                    <h4>수익률 기반 공식 (이미지 기반)</h4>
+                    <div class="formula">
+                        <p><strong>Kelly 비율:</strong> f* = (p × b - q × a) / b</p>
+                    </div>
+                    <div class="variables">
+                        <p><strong>변수:</strong></p>
+                        <ul>
+                            <li><strong>b:</strong> 승리 시 수익률 (예: 20% -> 0.2)</li>
+                            <li><strong>a:</strong> 패배 시 손실률 (예: 10% -> 0.1)</li>
+                            <li><strong>p:</strong> 승률, <strong>q:</strong> 패률 (1-p)</li>
+                            <li><strong>f*:</strong> 최적 투자 비중</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
